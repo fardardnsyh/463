@@ -1,0 +1,219 @@
+
+{{ define "main" }}
+<div class=" fixed top-0 left-0 w-[100vw] bg-[#000000] bg-opacity-90 h-[100vh]" id="fs_img_container" style="display:none; z-index:10000;">
+    <div class="flex relative">
+
+    </div>
+    <div class="flex relative items-center justify-center h-[100%] w-[100%]">
+        <div>
+        <button id="close_fs" class="px-2 py-1 bg-red-800 bg-opacity-90 translate-x-[50%] absolute right-[50%] bottom-10">Close Preview</button>
+            <img id="fs_img" class="opacity-100" src="#" />
+        </div>
+    </div>
+</div>
+<article id="article">
+  <header class="mb-10">
+      <div class="flex mb-2 w-3xl">
+    {{ range .Params.categories }}
+
+    <a
+      class="mr-2 px-2 text-sm no-underline uppercase rounded"
+      href="{{ printf "/categories/%s" . | urlize }}"
+      >#{{ . }}</a>
+    {{ end }}
+
+
+      </div>
+    <h1 class="!my-0 pb-2.5 leading-[120%] title_heading">{{ .Title }}</h1>
+    {{ if ne .Type "page" }}
+        <div class="text-sm">
+          {{ if .Date }}
+          <span class="text-sm font-bold opacity-80">{{ .Date | time.Format ":date_medium" }}</span>
+          {{ end }}<!---->
+          {{ $single_author := or .Params.Author site.Author.name }}
+          <!---->
+          {{ if $single_author }}
+          <span class="mx-1">&middot;</span>
+          <span>{{ $single_author }}</span>
+          {{ end }}
+        </div>
+    {{ end }}
+  </header>
+  <summary class="mt-[1.5cm] mb-7 list-none">
+      {{ .Summary }}
+    </summary>
+      <h1 class="text-2xl mb-0 pb-0"> Table of Content </h1>
+      <details open>
+          <summary class="cursor-pointer" >Click to expand</summary>
+          {{ .TableOfContents }}
+      </details>
+  <hr />
+
+  <section class="text-black sm:text-[15px] dark:text-white leading-[150%] js-reading-content">{{ .Content }}</section>
+
+    <script> 
+        const article = document.getElementById("article");
+        let prog = document.getElementById('progress');
+
+        let body = document.body,
+        html = document.documentElement;
+
+        let height = Math.max(
+            body.scrollHeight,
+            body.offsetHeight,
+            html.clientHeight,
+            html.scrollHeight,
+            html.offsetHeight
+        );
+
+        const setProgress = () => {
+            let scrollFromTop = document.documentElement.scrollTop;
+            let width = (scrollFromTop / height) * 100;
+            if (width>100) width=100;
+            width = width + "%";
+
+            prog.style.width = width;
+        };
+
+        window.addEventListener('scroll', setProgress);
+
+        setProgress();
+    </script>
+  <!-- Post Tags -->
+  {{ if .Params.tags }}
+  <footer class="mt-12 flex flex-wrap">
+    {{ range .Params.tags }} {{ $href := print (absURL "tags/") (urlize .) }}
+    <a
+      class="mb-1.5 mr-1.5 rounded-lg bg-black/[3%] px-5 py-1.5 no-underline dark:bg-white/[8%]"
+      href="{{ $href }}"
+      name="{{ . }}"
+      >{{ . }}</a
+    >
+    {{ end }}
+  </footer>
+  {{ end }}
+
+
+
+
+  <!-- Post Nav -->
+  {{ if not site.Params.disablePostNavigation }}<!---->
+  {{ $pages := where site.RegularPages "Type" "in" site.Params.mainSections }}<!---->
+  {{ if and (gt (len $pages) 1) (in $pages . ) }}
+  <nav class="mt-24 flex rounded-lg bg-black/[3%] text-lg dark:bg-white/[8%]">
+    {{ with $pages.Next . }}
+    <a
+      class="flex w-1/2 items-center rounded-l-md p-6 pr-3 font-semibold no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]"
+      href="{{ .Permalink }}"
+      ><span class="mr-1.5">←</span><span>{{ .Name }}</span></a
+    >
+    {{ end }}<!---->
+    {{ with $pages.Prev . }}
+    <a
+      class="ml-auto flex w-1/2 items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]"
+      href="{{ .Permalink }}"
+      ><span>{{ .Name }}</span><span class="ml-1.5">→</span></a
+    >
+    {{ end }}
+  </nav>
+  {{ end }}<!---->
+  {{ end }}
+
+  <!-- Disqus -->
+  {{ if and site.DisqusShortname (not (eq .Params.comments false)) }}
+  <div class="mt-24" id="disqus_thread">
+      <div id="disqus-disclaimer">
+        <p>
+          For the time being, comments are managed by Disqus, a third-party library. I will eventually replace it with another solution, but the timeline is unclear. Considering the amount of data being loaded, if you would like to view comments or post a comment, click on the button below. For more information about why you see this button, take a look at the following <a href="/articles/load_disqus_comments_on_click/">article</a>.
+        </p>
+        <button id="disqus-trigger" class="btn mt-16 radius-0" onclick="load_disqus('nirjalpaudel-com-np'); this.disabled=true;">
+          Load Comments
+        </button>
+      </div>
+  </div>
+
+  {{ end }}
+
+  <!-- GraphComment -->
+  {{ if and site.Params.graphCommentId (not (eq .Params.comments false)) }}
+  <div class="mt-24" id="graphcomment"></div>
+  <script type="text/javascript">
+    var __semio__params = {
+      graphcommentId: '{{ site.Params.graphCommentId  }}',
+      behaviour: {
+        //  uid: "...",
+      },
+      // configure your variables here
+    };
+
+    function __semio__onload() {
+      __semio__gc_graphlogin(__semio__params);
+    }
+
+    (function () {
+      var gc = document.createElement('script');
+      gc.type = 'text/javascript';
+      gc.async = true;
+      gc.onload = __semio__onload;
+      gc.defer = true;
+      gc.src =
+        'https://integration.graphcomment.com/gc_graphlogin.js?' + Date.now();
+      (
+        document.getElementsByTagName('head')[0] ||
+        document.getElementsByTagName('body')[0]
+      ).appendChild(gc);
+    })();
+  </script>
+  {{ end }}
+
+  <!-- mermaid -->
+  {{- partial "mermaid.html" . -}}
+
+
+
+</article>
+
+<script src="/js/image.js" type="text/javascript"></script>
+
+<div id="" class="relative">
+    <div class="w-[100%] pb-16 pt-12 dark:prose-invert">
+          <!-- Lets calculate related blogs -->
+            {{ $relatedPosts := (where .Site.RegularPages "Type" "posts") | shuffle }}
+            <!-- Exclude the current post and keep only those with intersecting tags -->
+            {{ $relatedPosts := where $relatedPosts "Params.tags" "intersect" .Params.tags }}
+            <!-- related posts is calculated by tags -->
+            <!-- tags are defined in Params.tags and don't display posts with same slug -->
+            {{ $relatedPosts := where $relatedPosts "Params.slug" "ne" .Params.slug }}
+            {{ $relatedPosts := first 4 $relatedPosts }}
+
+          {{ if gt (len $relatedPosts) 0 }}
+          <div>
+                <h2 class="mt-16 mb-8 font-bold">Related Posts</h2>
+                <div class="suggested_blogs">
+                {{ range $relatedPosts }}
+                    {{ partial "suggestions.html" . }}
+                {{end}}
+                </div>
+          </div>
+          {{ end }}
+
+
+          <!-- Lets get some random blogs -->
+              {{ $randomPosts := (where .Site.RegularPages "Type" "posts") | shuffle | first 4 }}
+            <!-- Exclude the current post and keep only those with intersecting tags -->
+            <!-- related posts is calculated by tags -->
+            <!-- tags are defined in Params.tags and don't display posts with same slug -->
+
+            <hr />
+
+          {{ if gt (len $randomPosts) 0 }}
+            <h2 class="mt-16 mb-8 font-bold">You may also like</h2>
+            <div class="suggested_blogs">
+            {{ range $randomPosts }}
+                {{ partial "suggestions.html" . }}
+            {{end}}
+            </div>
+          {{ end }}
+    </div>
+</div>
+{{ end }}

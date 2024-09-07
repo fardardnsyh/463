@@ -1,0 +1,81 @@
+{{ define "main" }}
+
+<!-- Tag Title -->
+{{ if and .Title (eq .Type "tags") }}
+<h1 class="mb-16">#{{ .Title }}</h1>
+{{ end }}
+
+<!-- $pages -->
+{{ $pages := union .RegularPages .Sections }}<!---->
+
+{{ if .IsHome }}<!---->
+{{ $pages = where site.RegularPages "Type" "in" site.Params.mainSections }}<!---->
+{{ end }}
+
+<h1 id="recent_blogs" class="text-4xl mt-8 mb-16">Blogs</h1>
+
+<!-- Articles -->
+{{ $paginator := .Paginate $pages }}
+
+{{ range $index, $page := $paginator.Pages }}<!---->
+
+<!-- avatar -->
+
+    <section class="relative my-7 last-of-type:mb-0">
+      {{ if gt .Weight 0 }}
+      <span
+        class="mb-2 ml-px inline-block text-[0.8rem] font-medium uppercase tracking-wider text-[#ff3b2d] opacity-70"
+        >Featured</span
+      >
+      {{ end }}
+      <div class="flex flex-row align-items-center">
+            {{ if .Params.categories }}
+                {{ range .Params.categories }}
+                        <a
+                          class="mr-2 no-underline roboto-thin text-sm mb-2 uppercase light:text-dark dark:text-white opacity-70"
+                          href="{{ printf "/categories/%s" . | urlize }}"
+                          name="{{ . }}"
+                          ># {{ . }}</a>
+                {{end}}
+            {{end}}  
+          <time class="text-sm uppercase antialiased">
+              <i class="fa fa-calendar"></i> {{ .Date | time.Format ":date_medium" }}
+          </time>
+      </div>
+          <a class="relative no-underline" href="{{ .Permalink }}">
+              <h2 class="!my-0 font-bold leading-[120%]">{{ .Title }}</h2>
+          </a>
+          <div class="my-3">
+              {{.Summary }}
+          </div>
+                <div>
+              <a class="relative learn_more text-[#2a6bd4] dark:text-[#89b5fa] no-underline" href="{{ .Permalink }}">
+                  Learn More
+                  <span class="ml-2">→</span>
+              </a>
+          </div>
+      <span>
+
+      <!-- • -->
+      </span>
+
+    </section>
+    {{ end }}
+
+    <!-- Main Nav -->
+    <!-- Main Nav -->
+    {{ if gt $paginator.TotalPages 1 }}
+        <nav class="mt-16 flex">
+          {{ if $paginator.HasPrev }}
+          <a class="btn" href="{{ $paginator.Prev.URL }}">← {{ i18n "prev_page" }}</a>
+          {{ end }}<!---->
+          {{ if $paginator.HasNext }}
+          <a class="btn ml-auto" href="{{ $paginator.Next.URL }}"
+            >{{ i18n "next_page" }} →</a
+          >
+          {{ end }}
+        </nav>
+    {{ end }}<!---->
+
+{{ end }}
+

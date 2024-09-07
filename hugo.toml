@@ -1,0 +1,79 @@
+baseURL = 'https://nirjalpaudel.com.np'
+languageCode = 'en-us'
+title = "Nirjal's Blog"
+theme = 'paper'
+author = 'Nirjal Paudel'
+paginate = 5
+enableRobotsTXT = true
+enableEmoji = true
+enableGitInfo = true
+# Google analytics code
+googleAnalytics = "G-LZ4S5KBNWY"
+summaryLength = 20
+
+[outputs]
+  home = ["HTML", "RSS", "SITEMAP"]
+
+[sitemap]
+  changefreq = "monthly"
+  priority = -0.5
+  filename = "sitemap.xml"
+
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+  series = "series"
+
+[permalinks]
+  post = "/blogs/:year/:month/:slug/"
+
+[markup]
+  [markup.tableOfContents]
+    endLevel = 3
+    ordered = false
+    startLevel = 2
+
+[services]
+  [services.disqus]
+    shortname = 'nirjalpaudel-com-np'
+
+[minify]
+  [minify.tdewolff]
+    [minify.tdewolff.js]
+      keepVarNames = true
+
+
+[params]
+  # color style
+  web_title = "Nirjal's Blog - Software Developer "
+  color = 'gray'                           # linen, wheat, gray, light
+  email = "nirjalpaudel54312@gmail.com"
+
+  # header social icons
+  twitter = 'n1rjal'               # twitter.com/YOUR_TWITTER_ID
+  github = 'n1rjal'                 # github.com/YOUR_GITHUB_ID
+  instagram = 'n1rjal'           # instagram.com/YOUR_INSTAGRAM_ID
+  linkedin = 'nirjalpaudel'             # linkedin.com/in/YOUR_LINKEDIN_ID
+  rss = true                                # show rss icon
+
+
+  # home page profile
+  # avatar = 'GRAVATAR_EMAIL'                 # gravatar email or image url
+  name = 'Nirjal Paudel'
+  bio = "I'm Nirjal Paudel, a software developer specializing in database and backend technology, optimization and cloud"
+  description = "I'm Nirjal Paudel, a software developer specializing in database and backend technology, optimization and cloud. Here I will share my tech experience"
+
+
+  # misc
+  disableHLJS = true                        # disable highlight.js
+  disablePostNavigation = true              # disable post navigation
+  monoDarkIcon = true                       # show monochrome dark mode icon
+  math = true                               # enable KaTeX math typesetting globally
+  localKatex = false                        # use local KaTeX js/css instead of CDN
+  favicon = "favicon.ico"                   # customize the default favicon
+  stacks = ["python", "javascript", "typescript", "mongodb", "postgres", "node", "docker", "nestjs", "git", "nginx", "optimization", "vim"]
+  foo = "bar"
+  [pagination]
+    disableAliases = false
+    pagerSize = 10
+    path = 'page'

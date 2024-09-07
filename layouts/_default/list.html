@@ -1,0 +1,127 @@
+{{ define "main" }}
+
+<!-- Tag Title -->
+{{ if and .Title (eq .Type "tags") }}
+<h1 class="mb-16">#{{ .Title }}</h1>
+{{ end }}
+
+<!-- $pages -->
+{{ $pages := union .RegularPages .Sections }}<!---->
+
+{{ if .IsHome }}<!---->
+    {{ $pages = where site.RegularPages "Type" "in" site.Params.mainSections | first 3 }}<!---->
+{{ end }}
+
+
+
+<!-- Articles -->
+{{ $paginator := .Paginate $pages }}
+{{ range $index, $page := $paginator.Pages}}<!---->
+<!-- avatar -->
+{{ if and $.IsHome (eq $paginator.PageNumber 1) (eq $index 0) }}<!---->
+    <div class="mb-16">
+
+    {{ $avatar_url := $.Scratch.Get "avatar_url" }}<!---->
+    {{ if or $avatar_url site.Params.name }}
+        <div class="mt-1 flex items-center">
+          <div
+            class="mr-5 shrink-0 rounded-full border-[0.5px] border-black/10 bg-white/50 p-3 shadow dark:bg-white/[15%]"
+          >
+            <img
+              class="my-0 aspect-square rounded-full "
+              style="width: 6rem; height: 6rem;"
+              src="/me.webp"
+              width="60"
+              height="60"
+              alt="{{ site.Params.name | default site.Title }}"
+            />
+          </div>
+          {{ if site.Params.name }}
+          <div>
+            <h1 class="mb-2 mt-3 text-[1.6rem] font-bold">{{ site.Params.name }}</h1>
+            <div class="break-words">
+              {{ site.Params.bio | default (print `A personal blog by `
+              site.Params.name) }}
+            </div>
+          </div>
+          {{ end }}
+        </div>
+    {{ end }}<!---->
+    </div>
+{{ end }}
+
+
+{{ if and $.IsHome (eq $paginator.PageNumber 1) (eq $index 0) }}<!---->
+    {{ partial "newsletter.html" . }}
+    <h1 id="recent_blogs" class="text-4xl mt-5 mb-16">Recent Blogs</h1>
+{{end}}
+
+
+<section class="relative my-7 last-of-type:mb-0">
+  {{ if gt .Weight 0 }}
+  <span
+    class="mb-2 ml-px inline-block text-[0.8rem] font-medium uppercase tracking-wider text-[#ff3b2d] opacity-70"
+    >Featured</span
+  >
+  {{ end }}
+  <div class="flex flex-row align-items-center">
+        {{ if .Params.categories }}
+            {{ range .Params.categories }}
+                    <a
+                      class="mr-2 no-underline roboto-thin text-sm mb-2 uppercase light:text-dark dark:text-white opacity-70"
+                      href="{{ printf "/categories/%s" . | urlize }}"
+                      name="{{ . }}"
+                      ># {{ . }}</a>
+            {{end}}
+        {{end}}  
+      <time class="text-sm uppercase antialiased">
+          <i class="fa fa-calendar"></i> {{ .Date | time.Format ":date_medium" }}
+      </time>
+  </div>
+      <a class="relative no-underline" name="{{.Title}}" href="{{ .Permalink }}">
+          <h2 class="!my-0 font-bold leading-[120%]">{{ .Title }}</h2>
+      </a>
+      <div class="my-3">
+          {{.Summary }}
+      </div>
+            <div>
+          <a 
+              name="{{ .Title }}"
+              class="relative learn_more text-[#2a6bd4] dark:text-[#89b5fa] no-underline" href="{{ .Permalink }}">
+              Learn More
+              <span class="ml-2">→</span>
+          </a>
+      </div>
+  <span>
+
+  <!-- • -->
+  </span>
+
+</section>
+{{ end }}
+
+<!-- Main Nav -->
+{{ if gt $paginator.TotalPages 1 }}
+    <nav class="mt-16 flex">
+      {{ if $paginator.HasPrev }}
+      <a class="btn" href="{{ $paginator.Prev.URL }}">← {{ i18n "prev_page" }}</a>
+      {{ end }}<!---->
+      {{ if $paginator.HasNext }}
+      <a class="btn ml-auto" href="{{ $paginator.Next.URL }}"
+        >{{ i18n "next_page" }} →</a
+      >
+      {{ end }}
+    </nav>
+{{ end }}<!---->
+
+<!-- Main Nav -->
+
+{{ if eq .RelPermalink "/" }}
+    <nav class="mt-16 flex">
+      <a class="btn ml-auto" href="/posts">
+          View All Blogs
+      </a>
+    </nav>
+{{ end }}
+
+{{ end }}

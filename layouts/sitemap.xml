@@ -1,0 +1,31 @@
+{{ printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    {{ range .Site.RegularPages }}
+        <url>
+            <loc>{{ .Permalink }}</loc>
+            <lastmod>{{ .Date.Format "2006-01-02" }}</lastmod>
+            <changefreq>{{ with .Params.changefreq }}{{ . }}{{ else }}monthly{{ end }}</changefreq>
+            <priority>
+                {{ if eq .RelPermalink "/" }}
+                    10
+                {{ else }}
+                    {{ with .Params.priority }}{{ . }}{{ else }}1{{ end }}
+                {{ end }}
+            </priority>
+        </url>
+    {{ end }}
+    {{ range .Pages }}
+        <url>
+            <loc>{{ .Permalink }}</loc>
+            <lastmod>{{ .Date.Format "2006-01-02" }}</lastmod>
+            <changefreq>{{ with .Params.changefreq }}{{ . }}{{ else }}monthly{{ end }}</changefreq>
+            <priority>
+                {{ if eq .RelPermalink "/" }}
+                    10
+                {{ else }}
+                    {{ with .Params.priority }}{{ . }}{{ else }}0.1{{ end }}
+                {{ end }}
+            </priority>
+        </url>
+    {{ end }}
+</urlset>
